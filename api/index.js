@@ -11,40 +11,52 @@ app.use(express.json());
 // Add middleware to also parse URL-encoded bodies, which is what GMod sends by default
 app.use(express.urlencoded({ extended: true }));
 
-// Handle POST requests to /api/send
-app.post('/api/send', (req, res) => {
-  console.log('Incoming POST request to /api/send');
-  // Accept URL-encoded (preferred) or JSON passed under "body" fallback
-  let payload = req.body || {};
-  if (payload.body && typeof payload.body === 'string') {
-    try {
-      payload = JSON.parse(payload.body);
-    } catch (e) {
-      console.log('Failed to parse JSON fallback body:', e.message);
+// Normalize timestamps to milliseconds (accept seconds or ms)
+function toMs(ts) {
+  const n = Number(ts);
+  if (!isFinite(n) || n <= 0) return null;
+  return n < 1e12 ? Math.floor(n * 1000) : Math.floor(n);
+}
+
+// Replace singular routes with dual-path handlers that accept both /send and /api/send
+const sendPaths = ['/send', '/api/send'];
+const fetchPaths = ['/fetch', '/api/fetch'];
+
+// Handle POST requests
+sendPaths.forEach((p) =>
+  app.post(p, (req, res) => {
+    console.log('Incoming POST request to', p);
+    let payload = req.body || {};
+    if (payload.body && typeof payload.body === 'string') {
+      try {
+        payload = JSON.parse(payload.body);
+      } catch (e) {
+        console.log('Failed to parse JSON fallback body:', e.message);
+      }
     }
-  }
 
-  if (payload && payload.text) {
-    const message = {
-      text: payload.text,
-      timestamp: Number(payload.timestamp) || Date.now()
-    };
-    messages.push(message);
-    res.status(200).send('message received');
-    console.log('new message:', message.text);
-  } else {
-    console.log('Bad request: missing text in body');
-    res.status(400).send('bad request');
-  }
-});
+    if (payload && payload.text) {
+      const ts = toMs(payload.timestamp) || Date.now();
+      const message = { text: payload.text, timestamp: ts };
+      messages.push(message);
+      res.status(200).send('message received');
+      console.log('new message:', message.text, '@', message.timestamp);
+    } else {
+      console.log('Bad request: missing text in body');
+      res.status(400).send('bad request');
+    }
+  })
+);
 
-// Handle GET requests to /api/fetch
-app.get('/api/fetch', (req, res) => {
-  console.log('Incoming GET request to /api/fetch');
-  const last_timestamp = Number(req.query.timestamp || 0) || 0;
-  const new_messages = messages.filter(msg => Number(msg.timestamp) > last_timestamp);
-  res.status(200).json(new_messages);
-});
+// Handle GET requests
+fetchPaths.forEach((p) =>
+  app.get(p, (req, res) => {
+    console.log('Incoming GET request to', p);
+    const lastTsMs = toMs(req.query.timestamp) || 0;
+    const new_messages = messages.filter((msg) => toMs(msg.timestamp) > lastTsMs);
+    res.status(200).json(new_messages);
+  })
+);
 
 // Vercel serverless function entry point
 module.exports = (req, res) => {
