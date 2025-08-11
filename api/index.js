@@ -16,6 +16,7 @@ app.post('/api/send', (req, res) => {
   console.log('Incoming POST request to /api/send');
   // The body will be correctly parsed whether it's JSON or URL-encoded
   if (req.body && req.body.text) {
+    // FIX: Corrected object creation syntax from = to :
     const message = {
       text: req.body.text,
       timestamp: req.body.timestamp
