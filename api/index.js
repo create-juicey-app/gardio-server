@@ -1,14 +1,20 @@
 const express = require('express');
 const app = express();
 
+// This is a simple in-memory message store that will reset
+// when the serverless function "wakes up" after a period of inactivity.
+// For a production app, you would use a database.
 let messages = [];
 
 // Use express.json() middleware to automatically parse JSON bodies
 app.use(express.json());
+// Add middleware to also parse URL-encoded bodies, which is what GMod sends by default
+app.use(express.urlencoded({ extended: true }));
 
 // Handle POST requests to /api/send
 app.post('/api/send', (req, res) => {
   console.log('Incoming POST request to /api/send');
+  // The body will be correctly parsed whether it's JSON or URL-encoded
   if (req.body && req.body.text) {
     const message = {
       text: req.body.text,
