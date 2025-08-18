@@ -1,0 +1,231 @@
+---
+const { } = Astro.props;
+---
+<div class="hero-visual">
+  <div class="terminal-window">
+    <div class="terminal-header">
+      <div class="terminal-title">juiceydev@portfolio:~$</div>
+      <div class="terminal-controls">
+        <button class="control-btn minimize"></button>
+        <button class="control-btn maximize"></button>
+        <button class="control-btn close"></button>
+      </div>
+    </div>
+    <div class="terminal-body">
+      <div class="neofetch-container">
+        <div class="pixel-grid-image">
+          <pre id="ascii-art" class="ascii-art"></pre>
+        </div>
+        <div class="neofetch-text">
+          <div class="neofetch-line"><span class="neofetch-label">juiceydev@portfolio</span></div>
+          <div class="neofetch-line"><span class="neofetch-label">-------------------</span></div>
+          <div class="neofetch-line"><span class="neofetch-label">OS:</span> CachyOS</div>
+          <div class="neofetch-line"><span class="neofetch-label">Host:</span> DigitalOcean</div>
+          <div class="neofetch-line"><span class="neofetch-label">Kernel:</span> Linux 6.16.0-4-cachyos-lto</div>
+          <div class="neofetch-line" id="uptime-line"><span class="neofetch-label">Uptime:</span> <span id="uptime-value"></span></div>
+          <div class="neofetch-line"><span class="neofetch-label">Shell:</span> fish</div>
+          <div class="neofetch-line"><span class="neofetch-label">Editor:</span> VSCode</div>
+          <div class="neofetch-line"><span class="neofetch-label">Terminal:</span> Kitty</div>
+          <div class="neofetch-line"><span class="neofetch-label">CPU:</span> Ryzen 5600</div>
+          <div class="neofetch-line"><span class="neofetch-label">GPU:</span> NVIDIA RTX 4060</div>
+          <div class="neofetch-line"><span class="neofetch-label">Memory:</span> 4.2GiB / 31.25GiB (12%)</div>
+        </div>
+      </div>
+      <div class="terminal-text">
+        <div class="code-line">
+          <span class="prompt">juiceydev@portfolio:~$</span> <span class="command">whoami</span>
+        </div>
+        <div class="code-line">
+          <span class="output">juiceydev</span>
+        </div>
+        <div class="code-line">
+          <span class="prompt">juiceydev@portfolio:~$</span> <span class="command">cat about_me.txt</span>
+        </div>
+        <div class="code-line">
+          <span class="output">
+            loves: coffee, clean code, terrible puns
+          </span>
+        </div>
+        <div class="code-line">
+          <span class="output">
+            current_status: probably debugging something
+          </span>
+        </div>
+        <div class="code-line">
+          <span class="prompt">juiceydev@portfolio:~$</span> <span class="command">ls favorite_tools/</span>
+        </div>
+        <div class="code-line">
+          <span class="output">
+            <i class="fab fa-js-square"></i> JavaScript
+            <i class="fab fa-react"></i> React
+            <i class="fab fa-rust"></i> Rust
+          </span>
+        </div>
+        <div class="code-line">
+          <span class="prompt">juiceydev@portfolio:~$</span> <span class="command">git status</span>
+        </div>
+        <div class="code-line">
+          <span class="output">On branch main</span>
+        </div>
+        <div class="code-line">
+          <span class="output">Your branch is ahead by 20 commits</span>
+        </div>
+        <div class="code-line">
+          <span class="prompt">juiceydev@portfolio:~$</span> <span class="command cursor-line"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .neofetch-container {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .ascii-art {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem; /* Match terminal font size */
+    line-height: 1.2; /* Match neofetch line height for alignment */
+    color: #ff6600;
+    white-space: pre;
+    flex-shrink: 0;
+  }
+
+  .neofetch-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: #aaaaaa;
+    line-height: 1.2;
+  }
+
+  .neofetch-label {
+    color: #ff6600;
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+
+  .cursor-line::after {
+    content: '▋';
+    font-size: 1.1em;
+    color: #f0f0f0;
+    animation: blink 1s step-end infinite;
+    margin-left: 0.2em;
+    vertical-align: middle;
+  }
+
+  @keyframes blink {
+    from, to {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const terminalWindow = document.querySelector('.terminal-window');
+    const closeButton = document.querySelector('.control-btn.close');
+
+    if (closeButton && terminalWindow) {
+      closeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        terminalWindow.style.display = 'none';
+      });
+    }
+
+    const asciiArtElement = document.getElementById('ascii-art');
+    if (!asciiArtElement) return;
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    
+    const image = new Image();
+    image.src = '/pfp.png'; // Assuming pfp.png is in the public/ directory
+
+    const asciiChars = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'];
+    const charRows = 15; // Match the number of lines in neofetch
+    const fontAspectRatio = 0.6; // Typical width-to-height ratio for monospace fonts
+    const lineHeight = 1.2; // Must match the CSS line-height for correct aspect ratio
+
+    image.onload = () => {
+      if (!context) return;
+      const imgWidth = image.width;
+      const imgHeight = image.height;
+
+      // Calculate the width based on the fixed number of rows and aspect ratio
+      const charHeight = imgHeight / charRows;
+      const charWidth = charHeight * fontAspectRatio;
+      const asciiWidth = Math.floor(imgWidth / charWidth);
+
+      canvas.width = asciiWidth;
+      canvas.height = charRows;
+      context.drawImage(image, 0, 0, asciiWidth, charRows);
+
+      const imageData = context.getImageData(0, 0, asciiWidth, charRows);
+      const data = imageData.data;
+      let asciiString = '';
+
+      for (let y = 0; y < charRows; y++) {
+        for (let x = 0; x < asciiWidth; x++) {
+          const offset = (y * asciiWidth + x) * 4;
+          const r = data[offset];
+          const g = data[offset + 1];
+          const b = data[offset + 2];
+          const a = data[offset + 3];
+
+          if (a < 128) { // Transparent or semi-transparent pixels
+            asciiString += ' ';
+            continue;
+          }
+
+          const gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+          const charIndex = Math.floor((gray / 255) * (asciiChars.length - 1));
+          asciiString += asciiChars[charIndex];
+        }
+        asciiString += '\n';
+      }
+      asciiArtElement.textContent = asciiString;
+    };
+
+    image.onerror = () => {
+      console.error("Failed to load the profile picture for ASCII art.");
+      // Optional: display a fallback ASCII art
+      asciiArtElement.textContent = `
+      Juicey
+      Dev
+      `;
+    };
+
+    // Uptime counter
+    const startTime = new Date();
+    const uptimeValueElement = document.getElementById('uptime-value');
+    let uptimeTextNode = null;
+    if (uptimeValueElement) {
+      uptimeTextNode = document.createTextNode('');
+      uptimeValueElement.appendChild(uptimeTextNode);
+    }
+
+    const updateUptime = () => {
+      const now = new Date();
+      const uptime = Math.floor((now - startTime) / 1000); // Uptime in seconds
+
+      const days = Math.floor(uptime / 86400);
+      const hours = Math.floor((uptime % 86400) / 3600);
+      const minutes = Math.floor((uptime % 3600) / 60);
+      const seconds = uptime % 60;
+
+      const uptimeString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      if (uptimeTextNode) {
+        uptimeTextNode.nodeValue = uptimeString;
+      }
+    };
+
+    updateUptime();
+    setInterval(updateUptime, 1000);
+  });
+</script>

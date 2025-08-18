@@ -1,0 +1,144 @@
+---
+interface Project {
+  title: string;
+  description: string;
+  tech: string[];
+  year: string;
+  image: string;
+  upcoming?: boolean; // Added optional upcoming flag
+}
+interface Props { project: Project; index: number }
+const { project, index } = Astro.props as Props;
+const projectIcons: Record<string, string> = {
+  'Niko Onegen': 'fas fa-comments',
+  'Gardio': 'fas fa-broadcast-tower', // New project icon
+  'That Design System': 'fas fa-mobile-alt',
+  'Data Viz Thing': 'fas fa-chart-line',
+  'E-commerce Makeover': 'fas fa-shopping-cart'
+};
+const icon = projectIcons[project.title] ?? 'fas fa-code';
+const techIcons: Record<string, string> = {
+  'TypeScript': 'fab fa-js-square',
+  'JavaScript': 'fab fa-js-square',
+  'React': 'fab fa-react',
+  'Vue.js': 'fab fa-vuejs',
+  'Node.js': 'fab fa-node-js',
+  'Python': 'fab fa-python',
+  'CSS3': 'fab fa-css3-alt',
+  'HTML5': 'fab fa-html5',
+  'D3.js': 'fas fa-chart-bar',
+  'PostgreSQL': 'fas fa-database',
+  'MongoDB': 'fas fa-leaf',
+  'Express': 'fas fa-server',
+  'Figma': 'fab fa-figma',
+  'Google API': 'fab fa-google',
+  'Lua': 'fas fa-moon',
+};
+---
+<div class="project-card" data-index={index}>
+  <div class="project-image-container">
+    <img src={project.image} alt={`${project.title} preview`} class="project-image" />
+  </div>
+  <div class="project-content">
+    <div class="project-year">
+      <i class="fas fa-calendar"></i> {project.year} {project.upcoming && <span class="upcoming-badge">UPCOMING</span>}
+    </div>
+    <h3 class="project-title">
+      <i class={icon}></i> {project.title}
+    </h3>
+    <p class="project-description">{project.description}</p>
+    <div class="project-tech">
+      {project.tech.map((tech: string) => {
+        const techIcon = techIcons[tech] ?? 'fas fa-code';
+        return (
+          <span class="tech-tag">
+            <i class={techIcon}></i> {tech}
+          </span>
+        );
+      })}
+    </div>
+    <div class="project-arrow">
+      <i class="fas fa-external-link-alt"></i>
+    </div>
+  </div>
+</div>
+<style>
+  .project-card {
+    display: flex; /* This will be overridden by global styles but good for component isolation */
+  }
+  .project-image-container {
+    flex: 0 0 300px;
+    overflow: hidden;
+    position: relative;
+    border-right: 1px solid rgba(255, 102, 0, 0.2);
+  }
+  .project-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .project-card:hover .project-image {
+    transform: scale(1.05);
+  }
+  .project-content {
+    padding: 2rem;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .project-description {
+    flex-grow: 1;
+  }
+  .project-arrow {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+    color: #ff6600;
+  }
+  .project-card:hover .project-arrow {
+    transform: scale(1.1) rotate(15deg);
+  }
+  @media (max-width: 768px) {
+    .project-card {
+      flex-direction: column;
+    }
+    .project-image-container {
+      flex-basis: 200px; /* Give image a fixed height on mobile */
+      border-right: none;
+      border-bottom: 1px solid rgba(255, 102, 0, 0.2);
+    }
+    .project-arrow {
+      top: 1rem;
+      right: 1rem;
+    }
+  }
+
+  /* Simplified outlined upcoming badge */
+  .upcoming-badge {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.15rem 0.4rem 0.18rem;
+    font-size: 0.55rem;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #ff6600;
+    border: 1px solid rgba(255,102,0,0.6);
+    border-radius: 3px;
+    background: rgba(255,102,0,0.06);
+    text-shadow: none;
+  }
+  .upcoming-badge::before { /* subtle corner accent */
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255,102,0,0.25);
+    border-radius: 3px;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+</style>

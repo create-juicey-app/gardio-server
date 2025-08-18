@@ -1,0 +1,148 @@
+---
+import ProjectCard from './ProjectCard.astro';
+interface Project {
+  title: string;
+  description: string;
+  tech: string[];
+  year: string;
+  image: string;
+  upcoming?: boolean;
+}
+interface Props { projects: Project[] }
+const { projects = [] } = Astro.props as Props;
+---
+<section id="projects" class="projects">
+  <div class="container">
+    <h2 class="section-title"><i class="fas fa-laptop-code"></i> Things I've built</h2>
+    <div class="projects-grid">
+      <div class="timeline-end">
+        <div class="timeline-arrow-top"></div>
+        <div class="timeline-text"><i class="fas fa-rocket"></i> More to come...</div>
+      </div>
+      {projects.map((project: Project, index: number) => (
+        <ProjectCard project={project} index={index} />
+      ))}
+      <div class="timeline-ground">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects-grid {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center cards for single-column layout */
+    gap: 2.5rem;
+    padding: 5rem 0 2rem; /* Add padding for timeline elements */
+  }
+
+  /* The main timeline wire */
+  .projects-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 3px;
+    background: linear-gradient(to top, rgba(255, 102, 0, 0.1), rgba(255, 102, 0, 0.6) 80%);
+    z-index: 1;
+  }
+
+  /* Animated arrows on the wire */
+  .projects-grid::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 3px;
+    background: repeating-linear-gradient(
+      to top,
+      transparent,
+      transparent 30px,
+      #ff9d57 30px,
+      #ff9d57 33px,
+      transparent 33px,
+      transparent 90px
+    );
+    animation: timeline-flow 3s linear infinite;
+    z-index: 2;
+  }
+
+  @keyframes timeline-flow {
+    from { background-position: 0 90px; }
+    to { background-position: 0 0; }
+  }
+
+  .timeline-end {
+    position: absolute;
+    top: -0.92rem; /* Adjusted from 0.5rem to be higher */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    text-align: center;
+  }
+
+  .timeline-arrow-top {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 15px solid rgba(255, 102, 0, 0.6);
+    margin: 0 auto 10px;
+    animation: timeline-arrow-pulse 3s 0.5s ease-in-out infinite;
+  }
+
+  @keyframes timeline-arrow-pulse {
+    0%, 100% {
+      transform: translateY(0);
+      border-bottom-color: rgba(255, 102, 0, 0.6);
+    }
+    50% {
+      border-bottom-color: #ff9d57;
+    }
+  }
+
+  .timeline-text {
+    background: #111;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 102, 0, 0.3);
+    color: #ff8c44;
+    font-weight: 500;
+    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+  }
+
+  .timeline-text i {
+    margin-right: 0.5rem;
+    opacity: 0.8;
+  }
+
+  .timeline-ground {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4rem; /* Lowered further */
+  }
+
+  .timeline-ground span {
+    display: block;
+    height: 3px;
+    background: rgba(255, 102, 0, 0.2); /* Faded color */
+    
+  }
+
+  .timeline-ground span:nth-child(1) { width: 40px; }
+  .timeline-ground span:nth-child(2) { width: 25px; }
+  .timeline-ground span:nth-child(3) { width: 12px; }
+</style>

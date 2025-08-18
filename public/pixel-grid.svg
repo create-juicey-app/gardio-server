@@ -1,0 +1,40 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="#330011" stroke="#ff6600" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#grid)"/>
+  
+  <!-- Random glowing squares with animations -->
+  <rect x="40" y="40" width="20" height="20" fill="#ff6600" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="120" y="80" width="20" height="20" fill="#ff6600" opacity="0.6">
+    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="200" y="120" width="20" height="20" fill="#ff6600" opacity="0.9">
+    <animate attributeName="opacity" values="0.9;0.4;0.9" dur="1.5s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="280" y="160" width="20" height="20" fill="#ff6600" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2.5s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="160" y="200" width="20" height="20" fill="#ff6600" opacity="0.5">
+    <animate attributeName="opacity" values="0.5;0.1;0.5" dur="4s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="320" y="60" width="20" height="20" fill="#ff6600" opacity="0.6">
+    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2.8s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="80" y="180" width="20" height="20" fill="#ff6600" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.3;0.7" dur="3.2s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="240" y="220" width="20" height="20" fill="#ff6600" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.4;0.8" dur="1.8s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="60" y="260" width="20" height="20" fill="#ff6600" opacity="0.5">
+    <animate attributeName="opacity" values="0.5;0.1;0.5" dur="3.5s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="340" y="140" width="20" height="20" fill="#ff6600" opacity="0.9">
+    <animate attributeName="opacity" values="0.9;0.5;0.9" dur="2.2s" repeatCount="indefinite"/>
+  </rect>
+</svg>

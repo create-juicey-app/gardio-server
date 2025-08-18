@@ -1,0 +1,319 @@
+<script>
+    // Simple but effective performance detection
+    let isHighPerformance = true;
+    let performanceChecked = false;
+
+    // Check device performance capability
+    function checkPerformance() {
+      if (performanceChecked) return;
+      performanceChecked = true;
+
+      // Start with basic checks
+      const startTime = performance.now();
+      
+      // Test 1: Check if CSS backdrop-filter is supported
+      const testElement = document.createElement('div');
+      testElement.style.backdropFilter = 'blur(1px)';
+      const supportsBackdropFilter = testElement.style.backdropFilter !== '';
+      
+      // Test 2: Check device memory (if available)
+      const deviceMemory = (navigator as any).deviceMemory;
+      if (deviceMemory && deviceMemory < 4) {
+        isHighPerformance = false;
+      }
+      
+      // Test 3: Check hardware concurrency (CPU cores)
+      if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) {
+        isHighPerformance = false;
+      }
+      
+      // Test 4: Check connection quality
+      const connection = (navigator as any).connection;
+      if (connection) {
+        if (connection.effectiveType === 'slow-2g' || 
+            connection.effectiveType === '2g' || 
+            connection.effectiveType === '3g') {
+          isHighPerformance = false;
+        }
+        if (connection.saveData) {
+          isHighPerformance = false;
+        }
+      }
+      
+      // Test 5: User agent based detection
+      const userAgent = navigator.userAgent.toLowerCase();
+      if (userAgent.includes('mobile') || 
+          userAgent.includes('android') && !userAgent.includes('chrome/9')) {
+        isHighPerformance = false;
+      }
+      
+      // Test 6: Simple performance timing test
+      const iterations = 1000;
+      const testStart = performance.now();
+      for (let i = 0; i < iterations; i++) {
+        document.createElement('div');
+      }
+      const testEnd = performance.now();
+      
+      if ((testEnd - testStart) > 10) { // If creating 1000 divs takes more than 10ms
+        isHighPerformance = false;
+      }
+      
+      // Test 7: Check if backdrop-filter actually works
+      if (!supportsBackdropFilter) {
+        isHighPerformance = false;
+      }
+      
+      // Test 8: Frame rate detection
+      let frameCount = 0;
+      const frameStart = performance.now();
+      
+      function countFrames() {
+        frameCount++;
+        if (frameCount < 60) {
+          requestAnimationFrame(countFrames);
+        } else {
+          const frameEnd = performance.now();
+          const fps = 60000 / (frameEnd - frameStart);
+          if (fps < 50) { // If we can't maintain ~60fps for 60 frames
+            isHighPerformance = false;
+          }
+          applyPerformanceClasses();
+        }
+      }
+      
+      requestAnimationFrame(countFrames);
+      
+      // Fallback timer in case frame test doesn't complete
+      setTimeout(() => {
+        if (!performanceChecked) {
+          applyPerformanceClasses();
+        }
+      }, 3000);
+    }
+
+    // Apply appropriate CSS classes based on performance
+    function applyPerformanceClasses() {
+      const blurElements = [
+        '.nav',
+        '.about',
+        '.contact',
+        '.skill-tag',
+        '.stat-item',
+        '.project-card',
+        '.contact-link'
+      ];
+
+      blurElements.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(element => {
+          const htmlElement = element as HTMLElement;
+          if (isHighPerformance) {
+            htmlElement.classList.add('blur-supported');
+            htmlElement.classList.remove('blur-fallback');
+          } else {
+            htmlElement.classList.add('blur-fallback');
+            htmlElement.classList.remove('blur-supported');
+          }
+        });
+      });
+    }
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetSelector = (e.currentTarget as HTMLAnchorElement).getAttribute('href');
+        const target = targetSelector ? document.querySelector(targetSelector) : null;
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Enhanced grid animation on load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Start performance check immediately
+      setTimeout(checkPerformance, 100);
+
+      // Terminal typing animation
+      const terminalLines = document.querySelectorAll('.code-line');
+      terminalLines.forEach((line, index) => {
+        const htmlLine = line as HTMLElement;
+        htmlLine.style.opacity = '0';
+        setTimeout(() => {
+          htmlLine.style.opacity = '1';
+          htmlLine.style.animation = 'fadeIn 0.5s ease forwards';
+        }, index * 800);
+      });
+
+      // Enhanced project cards hover effect
+      document.querySelectorAll('.project-card').forEach(card => {
+        const htmlCard = card as HTMLElement;
+        card.addEventListener('mouseenter', () => {
+          htmlCard.style.borderColor = '#fff';
+          htmlCard.style.boxShadow = '0 10px 30px rgba(255, 255, 255, 0.1)';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+          htmlCard.style.borderColor = '#222';
+          htmlCard.style.boxShadow = 'none';
+        });
+      });
+
+      // Enhanced scroll-based animations with rotation
+      const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -80px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const target = entry.target as HTMLElement;
+          if (entry.isIntersecting) {
+            target.style.opacity = '1';
+            target.style.transform = 'translateY(0) rotate(0deg)';
+            
+            // Apply performance classes when elements become visible
+            if (performanceChecked) {
+              applyPerformanceClasses();
+            }
+            
+            // Animate child elements with stagger
+            if (entry.target.classList.contains('about')) {
+              animateSkills();
+              animateStats();
+            } else if (entry.target.classList.contains('projects')) {
+              animateProjects();
+            }
+          }
+        });
+      }, observerOptions);
+
+      // Animate skills with rotation
+      function animateSkills() {
+        const skillTags = document.querySelectorAll('.skill-tag');
+        skillTags.forEach((tag, index) => {
+          const htmlTag = tag as HTMLElement;
+          setTimeout(() => {
+            htmlTag.classList.add('animate');
+            htmlTag.style.animation = `skillFloat 0.6s ease forwards`;
+          }, index * 100);
+        });
+      }
+
+      // Animate stats with bounce and rotation
+      function animateStats() {
+        const statItems = document.querySelectorAll('.stat-item');
+        statItems.forEach((stat, index) => {
+          const htmlStat = stat as HTMLElement;
+          setTimeout(() => {
+            htmlStat.classList.add('animate');
+            htmlStat.style.animation = `statBounce 0.8s ease forwards`;
+          }, index * 200);
+        });
+      }
+
+      // Animate projects with slide and rotation
+      function animateProjects() {
+        const projectCards = document.querySelectorAll('.project-card');
+        projectCards.forEach((card, index) => {
+          const htmlCard = card as HTMLElement;
+          setTimeout(() => {
+            htmlCard.classList.add('animate');
+            htmlCard.style.animation = `projectSlide 0.8s ease forwards`;
+          }, index * 150);
+        });
+      }
+
+      // Observe sections for scroll animations
+      document.querySelectorAll('section').forEach(section => {
+        const htmlSection = section as HTMLElement;
+        htmlSection.style.opacity = '0';
+        htmlSection.style.transform = 'translateY(60px) rotate(-0.5deg)';
+        htmlSection.style.transition = 'all 1s ease';
+        observer.observe(section);
+      });
+
+      // Enhanced typing effect for hero
+      const heroSubtitle = document.querySelector('.hero-subtitle') as HTMLElement;
+      const text = heroSubtitle.textContent || '';
+      heroSubtitle.textContent = '';
+      
+      setTimeout(() => {
+        let i = 0;
+        const typeWriter = () => {
+          if (i < text.length) {
+            heroSubtitle.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 40);
+          }
+        };
+        typeWriter();
+      }, 1000);
+
+      // Enhanced CTA button interactions with rotation
+      document.querySelectorAll('.cta-button').forEach(button => {
+        const htmlButton = button as HTMLElement;
+        
+        button.addEventListener('mouseenter', () => {
+          htmlButton.style.transform = 'translateY(-3px) rotate(1deg)';
+        });
+        
+        button.addEventListener('mouseleave', () => {
+          htmlButton.style.transform = 'translateY(0) rotate(0deg)';
+        });
+        
+        button.addEventListener('click', (e) => {
+          // Add click animation
+          htmlButton.style.transform = 'translateY(0) rotate(0deg) scale(0.95)';
+          setTimeout(() => {
+            htmlButton.style.transform = 'translateY(-3px) rotate(1deg) scale(1)';
+          }, 150);
+          
+          if (button.classList.contains('primary')) {
+            document.querySelector('#projects')?.scrollIntoView({
+              behavior: 'smooth'
+            });
+          } else {
+            document.querySelector('#contact')?.scrollIntoView({
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+
+      // Add floating animation to contact links
+      document.querySelectorAll('.contact-link').forEach((link, index) => {
+        const htmlLink = link as HTMLElement;
+        htmlLink.style.animationDelay = `${index * 0.2}s`;
+        
+        link.addEventListener('mouseenter', () => {
+          htmlLink.style.transform = 'translateY(-5px) rotate(2deg)';
+        });
+        
+        link.addEventListener('mouseleave', () => {
+          htmlLink.style.transform = 'translateY(0) rotate(0deg)';
+        });
+      });
+
+      // Add subtle parallax effect to terminal window
+      window.addEventListener('scroll', () => {
+        const terminal = document.querySelector('.terminal-window') as HTMLElement;
+        if (window.innerWidth > 768) {
+          const scrolled = window.pageYOffset;
+          if (terminal) {
+            terminal.style.transform = `rotate(5deg) translateY(${scrolled * 0.05}px)`;
+          }
+        } else {
+          if (terminal) {
+            // Ensure transform is 'none' on mobile, overriding other styles
+            terminal.style.transform = 'none';
+          }
+        }
+      });
+    });
+</script>

@@ -1,0 +1,18 @@
+---
+import AboutText from './AboutText.astro';
+import AboutSkills from './AboutSkills.astro';
+import AboutStats from './AboutStats.astro';
+const { skills = [] } = Astro.props;
+---
+<section id="about" class="about">
+  <div class="container">
+    <h2 class="section-title"><i class="fas fa-user-circle"></i> A bit about me</h2>
+    <div class="about-content">
+      <div>
+        <AboutText />
+        <AboutSkills skills={skills} />
+      </div>
+      <AboutStats />
+    </div>
+  </div>
+</section>

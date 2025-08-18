@@ -1,0 +1,33 @@
+---
+const currentYear = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="container">
+    <p>&copy; {currentYear} JuiceyDev. All rights reserved.</p>
+    <p>Built with <i class="fas fa-heart"></i> and a lot of coffee.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    text-align: center;
+    padding: 2rem 0;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 102, 0, 0.2);
+    font-size: 0.9rem;
+    color: #ccc;
+    position: relative;
+    z-index: 10;
+  }
+  .footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .footer p {
+    margin: 0.5rem 0;
+  }
+  .footer i {
+    color: #ff6600;
+  }
+</style>

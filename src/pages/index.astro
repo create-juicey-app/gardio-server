@@ -1,16 +1,92 @@
 ---
+import Nav from "../components/Nav.astro";
+import Hero from "../components/Hero.astro";
+import About from "../components/About.astro";
+import Projects from "../components/Projects.astro";
+import Contact from "../components/Contact.astro";
+import Footer from "../components/Footer.astro";
+import BaseHead from "../components/BaseHead.astro";
+import GlobalStyles from "../components/GlobalStyles.astro";
+import PageScripts from "../components/PageScripts.astro";
 
+// Portfolio data
+const projects = [
+
+  {
+    title: "Gardio",
+    description: "A Lua Garry's Mod radio addon that lets players chat across different servers through a shared relay server.",
+    tech: ["Lua", "Node.js"],
+    year: "2025",
+    image: "/images/Gardio.jpg",
+    upcoming: true
+  },
+  {
+    title: "Niko Onegen",
+    description: "A project that uses Gemini to talk to Niko, a character from a video game.",
+    tech: ["Python", "Google API"],
+    year: "2025",
+    image: "/images/Onegen.jpg"
+  },
+  {
+    title: "Jstartpage",
+    description: "Open-source Strawpage clone with every feature free. Still in development.",
+    tech: ["React", "Node.js", "MongoDB"],
+    year: "2025",
+    image: "/images/jstartpage.png",
+    upcoming: true
+  },
+  {
+    title: "JuiceyGPT",
+    description: "A silly experiment where I tried to build my own AI assistant and gave it way too much personality.",
+    tech: ["Discord API", "Ollama", "Python"], // updated tech stack
+    year: "2024",
+    image: "/images/juiceygpt.jpg"
+  },
+  {
+    title: "Roblox WebDoor",
+    description: "Opens doors in Roblox from a website and transmits info from the game.",
+    tech: ["Lua", "Node.js"],
+    year: "2024",
+    image: "/images/webdoor.jpg"
+  },
+  // New 2023 project jtooly
+  {
+    title: "jtooly",
+    description: "My first React/Next.js project: a bundle of tiny tools & experiments I built to learn the ecosystem.",
+    tech: ["JavaScript", "React", "MongoDB"], // replaced Next.js with React
+    year: "2023",
+    image: "/images/jtooly.jpg"
+  }
+];
+
+const skills = ["JavaScript", "TypeScript", "React", "Python", "CSS3", "HTML5", "Git", "Rust", "Lua", "Node.js", "MongoDB", "Next.js"];
 ---
 
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<head>
+  <BaseHead title="Portfolio | Creative Developer" />
+  <GlobalStyles />
+</head>
+<body>
+  <!-- Navigation -->
+  <Nav />
+
+  <!-- Hero Section -->
+  <Hero />
+
+  <!-- About Section -->
+  <About skills={skills} />
+
+  <!-- Projects Section -->
+  <Projects projects={projects} />
+
+  <!-- Contact Section -->
+  <Contact />
+
+  <!-- Footer -->
+  <Footer />
+
+  <PageScripts />
+</body>
 </html>

@@ -1,0 +1,33 @@
+---
+interface Props { skills: string[] }
+const { skills = [] } = Astro.props as Props;
+const iconMap: Record<string, string> = {
+  'JavaScript': 'fab fa-js-square',
+  'TypeScript': 'fab fa-js-square',
+  'React': 'fab fa-react',
+  'Node.js': 'fab fa-node-js',
+  'Python': 'fab fa-python',
+  'CSS3': 'fab fa-css3-alt',
+  'HTML5': 'fab fa-html5',
+  'Git': 'fab fa-git-alt',
+  'Rust': 'fab fa-rust',
+  'Lua': 'fas fa-moon',
+  'MongoDB': 'fas fa-leaf',
+  'Discord API': 'fab fa-discord',
+  'Ollama': 'fas fa-robot',
+  'Google API': 'fab fa-google'
+};
+---
+<div class="skills">
+  <h3><i class="fas fa-tools"></i> Stuff I'm good at</h3>
+  <div class="skills-grid">
+    {skills.map((skill: string) => {
+      const icon = iconMap[skill] ?? 'fas fa-code';
+      return (
+        <div class="skill-tag">
+          <i class={icon}></i> {skill}
+        </div>
+      );
+    })}
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="contact-links">
+  <a href="mailto:website@juicey.dev" class="contact-link">
+    <i class="fas fa-envelope"></i> Drop me an email
+  </a>
+  <a href="https://github.com/create-juicey-dev" target="_blank" rel="noopener noreferrer" class="contact-link">
+    <i class="fab fa-github"></i> Check out my GitHub
+  </a>
+  <a href="https://x.com/JuiceyDev" target="_blank" rel="noopener noreferrer" class="contact-link">
+    <i class="fab fa-twitter"></i> Follow me on X
+  </a>
+  <a href="https://bsky.app/profile/juicey.dev" target="_blank" rel="noopener noreferrer" class="contact-link">
+    <i class="fas fa-comment-dots"></i> Find me on Bluesky
+  </a>
+  <button id="discord-modal-btn" class="contact-link">
+    <i class="fab fa-discord"></i> Chat on Discord
+  </button>
+</div>
+
+<div id="discord-modal" class="modal" style="display: none;">
+  <div class="modal-overlay"></div>
+  <div class="modal-content">
+    <button class="close-btn">&times;</button>
+    <h3>Chat on Discord</h3>
+    <p>Add me on Discord to chat! My username is:</p>
+    <div class="copy-container">
+      <input type="text" value="juiceydev" id="discord-username" readonly />
+      <button id="copy-btn" title="Copy to clipboard">
+        <i class="fas fa-copy"></i>
+        <span class="copy-tooltip">Copy</span>
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('discord-modal');
+    const openBtn = document.getElementById('discord-modal-btn');
+    const closeBtn = modal.querySelector('.close-btn');
+    const overlay = modal.querySelector('.modal-overlay');
+    const copyBtn = document.getElementById('copy-btn');
+    const copyInput = document.getElementById('discord-username');
+    const tooltip = copyBtn.querySelector('.copy-tooltip');
+
+    const openModal = () => modal.style.display = 'block';
+    const closeModal = () => modal.style.display = 'none';
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+    
+    copyBtn.addEventListener('click', () => {
+      copyInput.select();
+      document.execCommand('copy');
+      tooltip.textContent = 'Copied!';
+      setTimeout(() => {
+        tooltip.textContent = 'Copy';
+      }, 2000);
+    });
+  });
+</script>
